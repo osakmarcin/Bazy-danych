@@ -1,0 +1,69 @@
+ZADANIE 1) DELIMITER $$ CREATE TRIGGER tr_zamowione BEFORE DELETE ON zamowione FOR EACH ROW BEGIN INSERT INTO zrealizowane(ID,SZTUK,TOWAR,DATA) VALUES (OLD.ID,OLD.SZTUK,OLD.TOWAR,OLD.DATA); END $$  ZADANIE 2) a) DELIMITER $$ CREATE TRIGGER tr_staff BEFORE INSERT ON staff FOR EACH ROW BEGIN IF new.PLACA<0 OR new.PLACA>3000 THEN SET new.PLACA=0; END IF; END $$  b) DELIMITER $$ CREATE TRIGGER tr_staffMessage BEFORE INSERT ON staff FOR EACH ROW BEGIN IF new.PLACA<0 OR new.PLACA>3000 THEN SIGNAL SQLSTATE '80000' SET MESSAGE_TEXT="Placa cannot be less than 0 or more than 3000"; END IF; END $$  Zadanie 3) DELIMITER $$ CREATE TRIGGER tr_balance BEFORE INSERT ON balance FOR EACH ROW BEGIN SET new.Income=new.Revenus-new.Costs; END $$  Zadanie 4) DELIMITER $$ CREATE TRIGGER tr_balanceLogInsert BEFORE INSERT ON balance FOR EACH ROW BEGIN INSERT INTO balance_log(Date,Message) VALUES (NOW(),CONCAT("new data inserted for "," ",NEW.CompanyName)); END $$  DELIMITE
+aa
+ZADANIE 1)
+DELIMITER
+$$
+CREATE TRIGGER tr_zamowione
+BEFORE DELETE ON zamowione
+FOR EACH ROW
+BEGIN
+INSERT INTO zrealizowane(ID,SZTUK,TOWAR,DATA) VALUES (OLD.ID,OLD.SZTUK,OLD.TOWAR,OLD.DATA);
+END
+$$
+
+ZADANIE 2)
+a)
+DELIMITER
+$$
+CREATE TRIGGER tr_staff
+BEFORE INSERT ON staff
+FOR EACH ROW
+BEGIN
+IF new.PLACA<0 OR new.PLACA>3000 THEN SET new.PLACA=0;
+END IF;
+END
+$$
+
+b)
+DELIMITER
+$$
+CREATE TRIGGER tr_staffMessage
+BEFORE INSERT ON staff
+FOR EACH ROW
+BEGIN
+IF new.PLACA<0 OR new.PLACA>3000 THEN SIGNAL SQLSTATE '80000' SET MESSAGE_TEXT="Placa cannot be less than 0 or more than 3000";
+END IF;
+END
+$$
+
+Zadanie 3)
+DELIMITER
+$$
+CREATE TRIGGER tr_balance
+BEFORE INSERT ON balance
+FOR EACH ROW
+BEGIN
+SET new.Income=new.Revenus-new.Costs;
+END
+$$
+
+Zadanie 4)
+DELIMITER
+$$
+CREATE TRIGGER tr_balanceLogInsert
+BEFORE INSERT ON balance
+FOR EACH ROW
+BEGIN
+INSERT INTO balance_log(Date,Message) VALUES (NOW(),CONCAT("new data inserted for "," ",NEW.CompanyName));
+END
+$$
+
+DELIMITER
+$$
+CREATE TRIGGER tr_balanceLogUpdate
+BEFORE UPDATE ON balance
+FOR EACH ROW
+BEGIN
+INSERT INTO balance_log(Date,Message) VALUES(NOW(), CONCAT("data updated for "," ", NEW.CompanyName)); 
+END
+$$'
